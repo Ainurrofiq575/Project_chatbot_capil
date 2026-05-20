@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/admin_layanan.css">
+
+<div class="admin-layanan-container">
+
+    <!-- HEADER -->
+    <div class="header-layanan">
+
+        <div class="header-text">
+            <h1>Manajemen Layanan</h1>
+            <p>Kelola seluruh jenis layanan Disdukcapil Kota Tegal</p>
+        </div>
+
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="layanan-action-bar">
+
+        <a href="/admin/layanan/tambah" class="btn-tambah">
+            + Tambah Layanan
+        </a>
+
+    </div>
+
+</div>
+
+<!-- TABEL -->
+    <div class="table-container">
+
+        <table class="layanan-table">
+
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Layanan</th>
+                    <th>Waktu</th>
+                    <th>Persyaratan Pelayanan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in layanan %}
+
+                <tr>
+
+                    <td>{{ loop.index }}</td>
+
+                    <td>
+                        <strong>{{ item['judul'] }}</strong>
+                    </td>
+
+                    <td>
+                        <span class="badge-waktu">
+                            {{ item['waktu_proses'] }}
+                        </span>
+                    </td>
+
+                    <td class="deskripsi-list">
+                        {{ item['deskripsi'].replace(';', ';\n') }}
+                    </td>
+
+                    <td>
+
+                        <div class="action">
+
+                            <a
+                                href="/admin/layanan/edit/{{ item['id'] }}"
+                                class="btn-edit"
+                            >
+                                Edit
+                            </a>
+
+                            <a
+                                href="/admin/layanan/hapus/{{ item['id'] }}"
+                                class="btn-hapus"
+                                onclick="return confirm('Hapus layanan ini?')"
+                            >
+                                Hapus
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

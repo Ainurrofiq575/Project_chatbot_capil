@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Form Perubahan Status Pendidikan</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <label>NIK</label>
+        <input type="text" name="nik" placeholder="Masukkan NIK" required>
+
+        <label>Nama Lengkap</label>
+        <input type="text" name="nama" placeholder="Masukkan nama lengkap" required>
+
+        <label>Pendidikan Lama</label>
+        <input type="text" name="pendidikan_lama" placeholder="Contoh: SLTA/Sederajat" required>
+
+        <label>Pendidikan Baru</label>
+        <select name="pendidikan_baru" required>
+            <option value="">-- Pilih Pendidikan --</option>
+            <option value="tidak_sekolah">Tidak/Belum Sekolah</option>
+            <option value="belum_tamat_sd">Belum Tamat SD/Sederajat</option>
+            <option value="tamat_sd">Tamat SD/Sederajat</option>
+            <option value="sltp">SLTP/Sederajat</option>
+            <option value="slta">SLTA/Sederajat</option>
+            <option value="diploma_1_2">Diploma I/II</option>
+            <option value="diploma_3">Akademi/Diploma III/Sarjana Muda</option>
+            <option value="s1">Diploma IV/Strata I</option>
+            <option value="s2">Strata II</option>
+        </select>
+
+        <label>Catatan</label>
+        <textarea name="catatan" placeholder="Tambahkan catatan jika perlu"></textarea>
+
+        <label>Upload Dokumen</label>
+
+        <div id="file-container">
+
+            <input
+                type="file"
+                name="file_upload"
+                accept=".jpg,.jpeg,.png,.pdf"
+            >
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-tambah-file"
+            onclick="tambahFile()"
+        >
+            + Tambah Dokumen
+        </button>
+
+        <button type="submit" class="btn-submit">Kirim Pengajuan</button>
+
+    </form>
+
+</div>
+
+<!-- js upload gambar -->
+ <script>
+
+function tambahFile()
+{
+    const container =
+        document.getElementById("file-container");
+
+    const input =
+        document.createElement("input");
+
+    input.type = "file";
+
+    input.name = "file_upload";
+
+    input.accept =
+        ".jpg,.jpeg,.png,.pdf";
+
+    input.style.marginTop =
+        "10px";
+
+    container.appendChild(input);
+}
+
+</script>
+
+{% endblock %}

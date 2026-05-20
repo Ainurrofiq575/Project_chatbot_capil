@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script src="/static/script.js"></script>
+
+<section class="pengajuan-section">
+
+    <h2 class="judul">Pengajuan Layanan</h2>
+
+    <div class="layanan-grid">
+
+        <!-- ===== KK ===== -->
+        <div class="layanan-card">
+            <h3>Permohonan Cetak Ulang KK</h3>
+            <p>Pendaftaran Penduduk</p>
+
+            <a href="/pengajuan-kk" class="btn-ajukan">Ajukan</a>
+        </div>
+
+        <!-- ===== PENDIDIKAN ===== -->
+        <div class="layanan-card">
+            <h3>Perubahan Status Pendidikan</h3>
+            <p>Pendaftaran Penduduk</p>
+
+            <a href="/pengajuan-pendidikan" class="btn-ajukan">Ajukan</a>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

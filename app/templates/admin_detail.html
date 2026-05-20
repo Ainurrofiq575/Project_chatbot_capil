@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="admin-detail-container">
+
+    <div class="detail-card">
+
+        <!-- HEADER -->
+        <div class="detail-header">
+
+            <h2>Detail Pengajuan</h2>
+
+            <span class="status-badge status-{{ item.status|lower|replace(' ', '-') }}">
+                {{ item.status }}
+            </span>
+
+        </div>
+
+<!-- INFO UTAMA -->
+<div class="detail-grid">
+
+    <div class="detail-box">
+        <label>NIK</label>
+        <p>{{ item.nik }}</p>
+    </div>
+
+    <div class="detail-box">
+        <label>Nama</label>
+        <p>{{ item.nama or '-' }}</p>
+    </div>
+
+    <div class="detail-box">
+        <label>Layanan</label>
+        <p>{{ item.jenis_layanan }}</p>
+    </div>
+
+    <div class="detail-box">
+        <label>Tanggal</label>
+        <p>{{ item.tanggal_pengajuan }}</p>
+    </div>
+
+</div>
+
+<!-- DETAIL PENGAJUAN USER -->
+<div class="detail-section">
+
+    <h3>Detail Pengajuan User</h3>
+
+    <div class="detail-grid">
+
+        <div class="detail-box">
+            <label>Jenis Pengajuan</label>
+            <p>{{ item.detail_pengajuan }}</p>
+        </div>
+
+        {% if item.jenis_layanan == "Perubahan Status Pendidikan" %}
+        <div class="detail-box">
+            <label>Pendidikan Terakhir</label>
+            <p>{{ item.pendidikan_lama or '-' }}</p>
+        </div>
+        {% endif %}
+
+        <div class="detail-box">
+            <label>Catatan User</label>
+            <p>{{ item.catatan_user or '-' }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- DOKUMEN USER -->
+{% if item.dokumen and item.dokumen|length > 0 %}
+
+<div class="file-section">
+
+    <h3>Dokumen User</h3>
+
+    {% for file in item.dokumen %}
+
+        <a
+            href="/static/uploads/{{ file.nama_file }}"
+            target="_blank"
+            class="file-btn"
+            style="display:block; margin-bottom:10px;"
+        >
+            📄 {{ file.nama_file }}
+        </a>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="file-section">
+
+    <p>Tidak ada dokumen dari user.</p>
+
+</div>
+
+{% endif %}
+        <!-- FILE BALASAN ADMIN -->
+        {% if item.file_balasan %}
+        <div class="file-section">
+            <a href="/static/uploads/{{ item.file_balasan }}"
+               target="_blank"
+               class="file-btn admin-file">
+               📎 Lihat File Balasan Admin
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- FORM ADMIN -->
+        <form
+            method="POST"
+            action="/admin/proses/{{ item.id }}"
+            enctype="multipart/form-data"
+            class="admin-form"
+        >
+
+            <h3>Proses Pengajuan</h3>
+
+            <!-- STATUS -->
+            <div class="form-group">
+
+                <label>Status</label>
+
+                <select name="status">
+
+                    <option value="Diproses"
+                        {% if item.status == "Diproses" %}selected{% endif %}>
+                        Diproses
+                    </option>
+
+                    <option value="Disetujui"
+                        {% if item.status == "Disetujui" %}selected{% endif %}>
+                        Disetujui
+                    </option>
+
+                    <option value="Ditolak"
+                        {% if item.status == "Ditolak" %}selected{% endif %}>
+                        Ditolak
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- CATATAN ADMIN -->
+            <div class="form-group">
+
+                <label>Catatan Admin</label>
+
+                <textarea name="catatan"
+                    placeholder="Tambahkan catatan admin...">{{ item.catatan_admin or '' }}</textarea>
+
+            </div>
+
+            <!-- FILE ADMIN -->
+            <div class="form-group">
+
+                <label>Upload File Balasan</label>
+
+                <input type="file" name="file_admin">
+
+            </div>
+
+            <!-- ACTION -->
+            <div class="form-actions">
+
+                <a href="/admin" class="btn-cancel">
+                    Batal
+                </a>
+
+                <button type="submit" class="btn-submit">
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

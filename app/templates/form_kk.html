@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form-container">
+
+    <h2>Form Permohonan Cetak Ulang Kartu Keluarga</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+
+    <label>Nama Lengkap</label>
+    <input 
+        type="text" 
+        value="{{ user.nama }}" 
+        readonly
+    >
+
+        <label>No KK</label>
+        <input type="text" name="no_kk" placeholder="Masukkan nomor KK" required>
+
+        <label>Alamat Keluarga</label>
+        <input type="text" name="alamat" placeholder="Masukkan alamat lengkap" required>
+
+        <div class="form-row">
+            <div>
+                <label>RT</label>
+                <input type="text" name="rt" required>
+            </div>
+            <div>
+                <label>RW</label>
+                <input type="text" name="rw" required>
+            </div>
+        </div>
+
+        <label>Kode Pos</label>
+        <input type="text" name="kode_pos">
+
+        <label>Nama Dusun/Kampung/Dukuh</label>
+        <input type="text" name="dusun">
+
+        <label>Provinsi</label>
+        <input type="text" name="provinsi" required>
+
+        <label>Kabupaten/Kota</label>
+        <input type="text" name="kabupaten" required>
+
+        <label>Kecamatan</label>
+        <input type="text" name="kecamatan" required>
+
+        <label>Desa/Kelurahan</label>
+        <input type="text" name="desa" required>
+
+        <label>Jenis Pengajuan</label>
+        <select name="jenis_pengajuan" required>
+            <option value="">-- Pilih --</option>
+            <option value="anggota">Perubahan Anggota Keluarga</option>
+            <option value="alamat">Perubahan Domisili/Alamat</option>
+            <option value="lainnya">Perubahan Lainnya</option>
+        </select>
+
+        <label>Catatan</label>
+        <textarea 
+            name="catatan"
+            placeholder="Tambahkan catatan jika perlu">
+        </textarea>
+
+<label>Upload Dokumen</label>
+
+<div id="file-container">
+
+    <input 
+        type="file"
+        name="file_upload"
+        accept=".jpg,.jpeg,.png,.pdf"
+    >
+
+</div>
+
+<button 
+    type="button" 
+    class="btn-tambah-file"
+    onclick="tambahFile()"
+>
+    + Tambah Gambar
+</button>
+
+        <button type="submit" class="btn-submit">Kirim Pengajuan</button>
+
+    </form>
+
+</div>
+
+<!-- js -->
+ <script>
+
+function tambahFile() {
+
+    const container = document.getElementById("file-container");
+
+    const input = document.createElement("input");
+
+    input.type = "file";
+
+    input.name = "file_upload";
+
+    input.accept = ".jpg,.jpeg,.png,.pdf";
+
+    input.style.marginTop = "10px";
+
+    container.appendChild(input);
+}
+
+</script>
+{% endblock %}

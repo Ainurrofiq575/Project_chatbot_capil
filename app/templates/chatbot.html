@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script src="/static/script.js"></script>
+
+<div class="chat-wrapper">
+
+    <!-- POPUP TUTORIAL -->
+<div id="popupTutorial" class="popup-overlay">
+    <div class="popup-box">
+
+        <h3>👋 Panduan Chatbot</h3>
+
+        <ul>
+            <li>Ketik pertanyaan seputar layanan Disdukcapil</li>
+            <li>Gunakan kata kunci seperti: KK, KTP, pendidikan</li>
+            <li>
+                Untuk menanyakan <b>syarat layanan</b>, ketik:
+                <br>
+                <i>"syarat (layanan)"</i> atau <i>"cara (layanan)"</i>
+            </li>
+            <li>
+                Untuk menanyakan <b>prosedur</b>, ketik:
+                <br>
+                <i>"prosedur (layanan)"</i>
+            </li>
+            <li>
+                💡 Contoh: "syarat cetak KK" atau "prosedur ubah pendidikan"
+            </li>
+        </ul>
+
+        <button onclick="closePopup()">Mengerti</button>
+
+    </div>
+</div>
+
+    <!-- Header -->
+    <div class="chat-header">
+        <div class="chat-icon">🤖</div>
+        <div>
+            <h3>Chatbot Disdukcapil</h3>
+            <p>Asisten Virtual Layanan Kependudukan</p>
+        </div>
+    </div>
+
+    <!-- Chat Body -->
+    <div class="chat-body" id="chatBody">
+        <div class="bot-message">
+            Halo! Saya asisten virtual Disdukcapil Kota Tegal. 
+            Ada yang bisa saya bantu?
+        </div>
+    </div>
+
+    <!-- Popular Questions -->
+    <div class="chat-suggestions">
+        <span>Syarat cetak ulang KK</span>
+        <span>Cara ubah golongan darah</span>
+        <span>Syarat ubah pendidikan</span>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input">
+        <input type="text" id="userInput" placeholder="Ketik pertanyaan Anda...">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+
+</div>
+
+{% endblock %}
