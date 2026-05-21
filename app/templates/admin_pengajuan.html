@@ -61,6 +61,7 @@
     <thead>
         <tr>
             <th>NIK</th>
+            <th>Nama</th>
             <th>Layanan</th>
             <th>Tanggal</th>
             <th>Status</th>
@@ -76,8 +77,14 @@
 
             <td>{{ item.nik }}</td>
 
+            <td>{{ item.nama or '-' }}</td>
+
             <td class="layanan">
                 {{ item.jenis_layanan }}
+                {% if item.detail_pengajuan %}
+                    <br>
+                    <small style="color: #666; font-size: 0.85em;">({{ item.detail_pengajuan | format_detail_pengajuan }})</small>
+                {% endif %}
             </td>
 
             <td class="tanggal">
@@ -100,6 +107,7 @@
             </td>
 
         </tr>
+
 
     {% endfor %}
 

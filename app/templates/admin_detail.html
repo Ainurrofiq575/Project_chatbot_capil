@@ -50,7 +50,7 @@
 
         <div class="detail-box">
             <label>Jenis Pengajuan</label>
-            <p>{{ item.detail_pengajuan }}</p>
+            <p>{{ item.detail_pengajuan | format_detail_pengajuan }}</p>
         </div>
 
         {% if item.jenis_layanan == "Perubahan Status Pendidikan" %}

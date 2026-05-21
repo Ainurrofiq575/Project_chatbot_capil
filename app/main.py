@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import text
 from starlette.middleware.sessions import SessionMiddleware
 from typing import Optional, List
+from fastapi.responses import JSONResponse
+from app.chatbot.chatbot_ai import chatbot_response
 
 import shutil
 import os
@@ -32,6 +34,26 @@ app.add_middleware(SessionMiddleware, secret_key="secret123")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="app/templates")
+
+def format_detail_pengajuan(value: str) -> str:
+    mapping = {
+        "anggota": "Perubahan Anggota Keluarga",
+        "alamat": "Perubahan Domisili/Alamat",
+        "lainnya": "Perubahan Lainnya",
+        "tidak_sekolah": "Tidak/Belum Sekolah",
+        "belum_tamat_sd": "Belum Tamat SD/Sederajat",
+        "tamat_sd": "Tamat SD/Sederajat",
+        "sltp": "SLTP/Sederajat",
+        "slta": "SLTA/Sederajat",
+        "diploma_1_2": "Diploma I/II",
+        "diploma_3": "Akademi/Diploma III/Sarjana Muda",
+        "s1": "Diploma IV/Strata I",
+        "s2": "Strata II"
+    }
+    return mapping.get(value, value or "-")
+
+templates.env.filters["format_detail_pengajuan"] = format_detail_pengajuan
+
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -271,12 +293,13 @@ async def submit_pendidikan(
     return RedirectResponse("/dashboard", status_code=303)
 
 @app.get("/login", response_class=HTMLResponse)
-async def login(request: Request):
+async def login(request: Request, error: Optional[str] = None):
     return templates.TemplateResponse(
         request=request,
         name="login.html",
         context={
-            "user": request.session.get("user")
+            "user": request.session.get("user"),
+            "error": error
         }
     )
 
@@ -311,16 +334,17 @@ async def process_login(
 
         return RedirectResponse("/dashboard", status_code=303)
 
-    return RedirectResponse("/login", status_code=303)
+    return RedirectResponse("/login?error=NIK atau Password salah!", status_code=303)
 
 
 @app.get("/register", response_class=HTMLResponse)
-async def register(request: Request):
+async def register(request: Request, error: Optional[str] = None):
     return templates.TemplateResponse(
         request=request,
         name="register.html",
         context={
-            "user": request.session.get("user")
+            "user": request.session.get("user"),
+            "error": error
         }
     )
 
@@ -341,7 +365,7 @@ async def process_register(
 
     if password != confirm_password:
         print("PASSWORD TIDAK SAMA")
-        return RedirectResponse("/register", status_code=303)
+        return RedirectResponse("/register?error=Konfirmasi password tidak cocok!", status_code=303)
 
     with engine.connect() as conn:
         check_user = conn.execute(
@@ -354,7 +378,8 @@ async def process_register(
 
         if check_user:
             print("USER SUDAH ADA")
-            return RedirectResponse("/register", status_code=303)
+            return RedirectResponse("/register?error=NIK atau Email sudah terdaftar!", status_code=303)
+
 
         hashed = bcrypt.hashpw(
             password.encode("utf-8"),
@@ -1027,3 +1052,35 @@ async def tambah_layanan_process(request: Request):
 
 
 print("Database berhasil terhubung")
+
+# CHATBOT
+@app.post("/api/chatbot")
+async def api_chatbot(request: Request):
+
+    body = await request.json()
+    message = body.get("message", "").strip()
+
+    if not message:
+        return JSONResponse({
+            "reply": "Silakan ketik pertanyaan terlebih dahulu."
+        })
+
+    menu = {
+        "1": "Apa saja persyaratan membuat KTP baru?",
+        "2": "Apa saja persyaratan Kartu Keluarga?",
+        "3": "Apa saja persyaratan Akta Kelahiran?",
+        "4": "Apa saja persyaratan Akta Kematian?",
+        "5": "Apa saja persyaratan perubahan status pendidikan?",
+        "6": "Apa saja persyaratan pindah datang?",
+        "7": "Apa saja layanan Disdukcapil?"
+    }
+
+
+    if message in menu:
+        message = menu[message]
+
+    reply = chatbot_response(message)
+
+    return JSONResponse({
+        "reply": reply
+    })

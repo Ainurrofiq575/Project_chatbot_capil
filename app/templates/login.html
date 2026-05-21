@@ -15,7 +15,14 @@
             Masuk ke akun Disdukcapil Anda
         </p>
 
-        <form method="POST" action="/login">
+        {% if error %}
+        <div class="alert-box error">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-message">{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/login" id="loginForm">
 
             <!-- NIK -->
             <label for="nik">NIK</label>
@@ -26,8 +33,11 @@
                 name="nik"
                 placeholder="Masukkan 16 digit NIK"
                 maxlength="16"
+                pattern="\d{16}"
+                title="NIK harus terdiri dari 16 digit angka"
                 required
             >
+
 
             <small id="nikWarning"
                    class="warning-text">
@@ -91,16 +101,21 @@
 // ==========================
 function togglePassword() {
 
-    const password =
-        document.getElementById("password");
+    const password = document.getElementById("password");
+    const iconShow = document.getElementById("iconShow");
+    const iconHide = document.getElementById("iconHide");
 
     if (password.type === "password") {
 
         password.type = "text";
+        iconShow.style.display = "none";
+        iconHide.style.display = "block";
 
     } else {
 
         password.type = "password";
+        iconShow.style.display = "block";
+        iconHide.style.display = "none";
 
     }
 }
@@ -108,22 +123,22 @@ function togglePassword() {
 // ==========================
 // VALIDASI NIK
 // ==========================
-const nikInput =
-    document.getElementById("nik");
+const nikInput = document.getElementById("nik");
+const passwordInput = document.getElementById("password");
+const loginForm = document.getElementById("loginForm");
 
 nikInput.addEventListener("input", function () {
 
     // hanya angka
-    this.value =
-        this.value.replace(/\D/g, '');
+    this.value = this.value.replace(/\D/g, '');
 
-    const warning =
-        document.getElementById("nikWarning");
+    const warning = document.getElementById("nikWarning");
 
-    if (this.value.length < 16) {
+    if (this.value.length === 0) {
+        warning.innerText = "";
+    } else if (this.value.length < 16) {
 
-        warning.innerText =
-            "NIK harus 16 digit";
+        warning.innerText = "NIK harus 16 digit";
 
     } else {
 
@@ -136,18 +151,15 @@ nikInput.addEventListener("input", function () {
 // ==========================
 // VALIDASI PASSWORD
 // ==========================
-const passwordInput =
-    document.getElementById("password");
-
 passwordInput.addEventListener("input", function () {
 
-    const warning =
-        document.getElementById("passwordWarning");
+    const warning = document.getElementById("passwordWarning");
 
-    if (this.value.length < 6) {
+    if (this.value.length === 0) {
+        warning.innerText = "";
+    } else if (this.value.length < 6) {
 
-        warning.innerText =
-            "Password minimal 6 karakter";
+        warning.innerText = "Password minimal 6 karakter";
 
     } else {
 
@@ -155,6 +167,20 @@ passwordInput.addEventListener("input", function () {
 
     }
 
+});
+
+// Mencegah submit jika validasi tidak lolos
+loginForm.addEventListener("submit", function (e) {
+    if (nikInput.value.length !== 16) {
+        e.preventDefault();
+        alert("Harap periksa kembali NIK Anda. NIK harus terdiri dari 16 digit.");
+        return;
+    }
+    if (passwordInput.value.length < 6) {
+        e.preventDefault();
+        alert("Password minimal harus terdiri dari 6 karakter.");
+        return;
+    }
 });
 
 </script>

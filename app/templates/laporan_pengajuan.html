@@ -225,7 +225,14 @@
 
                 <td>{{ loop.index }}</td>
                 <td>{{ item.nik }}</td>
-                <td>{{ item.jenis_layanan }}</td>
+                <td>
+                    {{ item.jenis_layanan }}
+                    {% if item.detail_pengajuan %}
+                        <br>
+                        <small style="color: #555;">({{ item.detail_pengajuan | format_detail_pengajuan }})</small>
+                    {% endif %}
+                </td>
+
                 <td>{{ item.status }}</td>
                 <td>{{ item.tanggal_pengajuan }}</td>
 

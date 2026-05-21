@@ -6,63 +6,72 @@
 
 <div class="chat-wrapper">
 
-    <!-- POPUP TUTORIAL -->
-<div id="popupTutorial" class="popup-overlay">
-    <div class="popup-box">
+    <div id="popupTutorial" class="popup-overlay">
+        <div class="popup-box">
 
-        <h3>👋 Panduan Chatbot</h3>
+            <h3>👋 Panduan Chatbot</h3>
 
-        <ul>
-            <li>Ketik pertanyaan seputar layanan Disdukcapil</li>
-            <li>Gunakan kata kunci seperti: KK, KTP, pendidikan</li>
-            <li>
-                Untuk menanyakan <b>syarat layanan</b>, ketik:
-                <br>
-                <i>"syarat (layanan)"</i> atau <i>"cara (layanan)"</i>
-            </li>
-            <li>
-                Untuk menanyakan <b>prosedur</b>, ketik:
-                <br>
-                <i>"prosedur (layanan)"</i>
-            </li>
-            <li>
-                💡 Contoh: "syarat cetak KK" atau "prosedur ubah pendidikan"
-            </li>
-        </ul>
+            <ul>
+                <li>Ketik pertanyaan seputar layanan Disdukcapil.</li>
+                <li>Bisa ketik manual, contoh: "syarat cetak ulang KK".</li>
+                <li>Bisa juga ketik angka menu layanan.</li>
+                <li>Contoh: ketik <b>1</b> untuk KTP, <b>2</b> untuk KK.</li>
+            </ul>
 
-        <button onclick="closePopup()">Mengerti</button>
+            <button onclick="closePopup()">Mengerti</button>
 
+        </div>
     </div>
-</div>
 
-    <!-- Header -->
     <div class="chat-header">
         <div class="chat-icon">🤖</div>
+
         <div>
             <h3>Chatbot Disdukcapil</h3>
             <p>Asisten Virtual Layanan Kependudukan</p>
         </div>
     </div>
 
-    <!-- Chat Body -->
     <div class="chat-body" id="chatBody">
+
         <div class="bot-message">
-            Halo! Saya asisten virtual Disdukcapil Kota Tegal. 
-            Ada yang bisa saya bantu?
+
+            Halo 👋<br><br>
+
+            Saya adalah asisten virtual Disdukcapil Kota Tegal.
+            <br><br>
+
+            Silakan ketik pertanyaan secara manual, atau pilih menu:
+            <br><br>
+
+            1. Syarat KTP<br>
+            2. Syarat Kartu Keluarga<br>
+            3. Syarat Akta Kelahiran<br>
+            4. Syarat Akta Kematian<br>
+            5. Syarat Perubahan Pendidikan<br>
+            6. Syarat Pindah Datang<br>
+            7. Daftar Layanan Disdukcapil
+
         </div>
+
     </div>
 
-    <!-- Popular Questions -->
     <div class="chat-suggestions">
-        <span>Syarat cetak ulang KK</span>
-        <span>Cara ubah golongan darah</span>
-        <span>Syarat ubah pendidikan</span>
+        <span onclick="setQuestion('1')">1. Syarat KTP</span>
+        <span onclick="setQuestion('2')">2. Syarat KK</span>
+        <span onclick="setQuestion('5')">5. Ubah Pendidikan</span>
     </div>
 
-    <!-- Input -->
     <div class="chat-input">
-        <input type="text" id="userInput" placeholder="Ketik pertanyaan Anda...">
+
+        <input
+            type="text"
+            id="userInput"
+            placeholder="Ketik pertanyaan atau angka menu..."
+        >
+
         <button onclick="sendMessage()">➤</button>
+
     </div>
 
 </div>

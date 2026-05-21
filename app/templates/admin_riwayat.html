@@ -81,8 +81,9 @@
 
                         {% if item.detail_pengajuan %}
                             <br>
-                            <small>{{ item.detail_pengajuan }}</small>
+                            <small>({{ item.detail_pengajuan | format_detail_pengajuan }})</small>
                         {% endif %}
+
                     </td>
 
                     <td>

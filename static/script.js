@@ -13,23 +13,33 @@ function sendMessage() {
     chatBody.appendChild(userDiv);
 
     // Bot reply
+fetch("/api/chatbot", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        message: message
+    })
+})
+.then(response => response.json())
+.then(data => {
     const botDiv = document.createElement("div");
     botDiv.classList.add("bot-message");
+    botDiv.textContent = data.reply;
 
-    if (message.toLowerCase().includes("kk")) {
-        botDiv.textContent = "Untuk cetak ulang KK, silakan membawa KK lama dan KTP ke kantor Disdukcapil.";
-    } 
-    else if (message.toLowerCase().includes("golongan darah")) {
-        botDiv.textContent = "Untuk ubah golongan darah, sertakan surat keterangan medis resmi.";
-    } 
-    else {
-        botDiv.textContent = "Terima kasih atas pertanyaan Anda. Silakan hubungi kantor Disdukcapil untuk informasi lebih lanjut.";
-    }
+    chatBody.appendChild(botDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+})
+.catch(error => {
+    const botDiv = document.createElement("div");
+    botDiv.classList.add("bot-message");
+    botDiv.textContent = "Maaf, chatbot sedang mengalami gangguan.";
 
-    setTimeout(() => {
-        chatBody.appendChild(botDiv);
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }, 500);
+    chatBody.appendChild(botDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+});
+
 
     input.value = "";
 }
@@ -49,6 +59,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // Popular suggestions interaction
+    const suggestions = document.querySelectorAll(".chat-suggestions span");
+    suggestions.forEach(span => {
+        span.addEventListener("click", function () {
+            if (input) {
+                input.value = this.innerText;
+                sendMessage();
+            }
+        });
+    });
 });
 
 // ==========================
@@ -118,6 +139,31 @@ function openDetail(button)
     document.getElementById("dLayanan").innerText =
         item.jenis_layanan;
 
+    // Pemetaan detail pengajuan ke teks yang mudah dipahami
+    const mapDetail = {
+        'anggota': 'Perubahan Anggota Keluarga',
+        'alamat': 'Perubahan Domisili/Alamat',
+        'lainnya': 'Perubahan Lainnya',
+        'tidak_sekolah': 'Tidak/Belum Sekolah',
+        'belum_tamat_sd': 'Belum Tamat SD/Sederajat',
+        'tamat_sd': 'Tamat SD/Sederajat',
+        'sltp': 'SLTP/Sederajat',
+        'slta': 'SLTA/Sederajat',
+        'diploma_1_2': 'Diploma I/II',
+        'diploma_3': 'Akademi/Diploma III/Sarjana Muda',
+        's1': 'Diploma IV/Strata I',
+        's2': 'Strata II'
+    };
+
+    const detailVal = item.detail_pengajuan;
+    const boxDetail = document.getElementById("boxDetailPengajuan");
+    if (detailVal) {
+        document.getElementById("dDetailPengajuan").innerText = mapDetail[detailVal] || detailVal;
+        if (boxDetail) boxDetail.style.display = "block";
+    } else {
+        if (boxDetail) boxDetail.style.display = "none";
+    }
+
     document.getElementById("dNik").innerText =
         item.nik;
 
@@ -127,8 +173,10 @@ function openDetail(button)
     document.getElementById("dTanggal").innerText =
         item.tanggal_pengajuan;
 
-    document.getElementById("modalStatus").innerText =
-        item.status;
+
+    const modalStatus = document.getElementById("modalStatus");
+    modalStatus.innerText = item.status;
+    modalStatus.className = "status-box status-" + item.status.toLowerCase().replace(/\s+/g, "-");
 
     // =========================
     // DOKUMEN USER
@@ -253,8 +301,9 @@ else
             "Pengajuan Anda ditolak.";
     }
 
-    document.getElementById("infoStatus").innerText =
-        info;
+    const infoStatus = document.getElementById("infoStatus");
+    infoStatus.innerText = info;
+    infoStatus.className = "info-box info-" + item.status.toLowerCase().replace(/\s+/g, "-");
 }
 
 // close modal
@@ -263,10 +312,10 @@ function closeDetail() {
     document.getElementById("modalDetail").style.display =
         "none";
 
-    document.getElementById("linkUser").href = "#";
-    document.getElementById("linkAdmin").href = "#";
-
     // reset semua box
+    const boxDetail = document.getElementById("boxDetailPengajuan");
+    if (boxDetail) boxDetail.style.display = "none";
+
     document.getElementById("boxUser").style.display =
         "none";
 
@@ -328,3 +377,67 @@ function toggleConfirmPassword() {
         iconHide.style.display = "none";
     }
 }
+
+// ==========================
+// QUICK QUESTION
+// ==========================
+function setQuestion(text) {
+
+    document.getElementById("userInput").value =
+        text;
+
+    sendMessage();
+}
+
+// ==========================
+// COLLAPSE/TOGGLE SYARAT
+// ==========================
+function toggleSyarat(btn, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const isCollapsed = container.classList.toggle('collapsed');
+
+    if (isCollapsed) {
+        btn.innerHTML = 'Baca Selengkapnya <span>▼</span>';
+        btn.classList.remove('expanded');
+    } else {
+        btn.innerHTML = 'Sembunyikan <span>▼</span>';
+        btn.classList.add('expanded');
+    }
+}
+
+// ==========================
+// THEME TOGGLE LOGIC
+// ==========================
+document.addEventListener("DOMContentLoaded", function () {
+    const themeToggleBtn = document.getElementById("themeToggle");
+    const themeToggleMobileBtn = document.getElementById("themeToggleMobile");
+
+    function updateThemeUI(theme) {
+        const themeText = document.querySelector(".theme-text");
+        if (themeText) {
+            themeText.textContent = theme === "dark" ? "Mode Terang" : "Mode Gelap";
+        }
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeUI(newTheme);
+    }
+
+    // Initialize UI Text based on active theme
+    const activeTheme = document.documentElement.getAttribute("data-theme") || "light";
+    updateThemeUI(activeTheme);
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", toggleTheme);
+    }
+    if (themeToggleMobileBtn) {
+        themeToggleMobileBtn.addEventListener("click", toggleTheme);
+    }
+});
