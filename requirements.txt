@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+jinja2
+sqlalchemy
+pymysql
+cryptography
+bcrypt
+requests
+faiss-cpu
+numpy
+sentence-transformers
+python-multipart
