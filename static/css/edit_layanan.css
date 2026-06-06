@@ -1,7 +1,7 @@
 /* CONTAINER */
 .admin-layanan-container{
     padding: 40px;
-    background: #f8fafc;
+    background: var(--bg-main);
     min-height: 100vh;
 }
 
@@ -29,7 +29,8 @@
 
 /* CARD */
 .form-card{
-    background: white;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 20px;
     padding: 35px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -39,7 +40,7 @@
 /* TITLE */
 .form-card h1{
     margin-bottom: 30px;
-    color: #1e293b;
+    color: var(--text-main);
     font-size: 28px;
 }
 
@@ -52,7 +53,7 @@
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
-    color: #334155;
+    color: var(--text-main);
 }
 
 /* INPUT */
@@ -60,11 +61,12 @@
 .form-group textarea{
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border);
     border-radius: 12px;
     font-size: 15px;
     transition: 0.3s;
-    background: #fff;
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
 /* FOCUS */
@@ -72,7 +74,8 @@
 .form-group textarea:focus{
     outline: none;
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-glow);
 }
 
 /* TEXTAREA */
@@ -95,4 +98,32 @@
 .btn-tambah:hover{
     background: #1d4ed8;
     transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .admin-layanan-container {
+        padding: 16px;
+    }
+    .edit-header {
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+    }
+    .edit-header h1 {
+        font-size: 24px;
+    }
+    .form-card {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    .form-card h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .btn-tambah {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
 }

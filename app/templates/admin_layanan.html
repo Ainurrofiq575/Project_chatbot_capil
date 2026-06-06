@@ -3,6 +3,7 @@
 {% block content %}
 
 <link rel="stylesheet" href="/static/css/admin_layanan.css">
+<!-- <link rel="stylesheet" href="/static/style.css"> -->
 
 <div class="admin-layanan-container">
 
@@ -25,9 +26,7 @@
 
     </div>
 
-</div>
-
-<!-- TABEL -->
+    <!-- TABEL -->
     <div class="table-container">
 
         <table class="layanan-table">
@@ -75,13 +74,13 @@
                                 Edit
                             </a>
 
-                            <a
-                                href="/admin/layanan/hapus/{{ item['id'] }}"
+                            <button
+                                type="button"
                                 class="btn-hapus"
-                                onclick="return confirm('Hapus layanan ini?')"
+                                onclick="openDeleteModal('{{ item.id }}')"
                             >
                                 Hapus
-                            </a>
+                            </button>
 
                         </div>
 
@@ -98,5 +97,55 @@
     </div>
 
 </div>
+
+<!-- MODAL DELETE -->
+<div id="deleteModal" class="modal-overlay">
+
+    <div class="modal-box">
+
+        <h3>Konfirmasi Hapus</h3>
+
+        <p>
+            Apakah Anda yakin ingin menghapus layanan ini?
+        </p>
+
+        <div class="modal-actions">
+
+            <a
+                id="confirmDeleteBtn"
+                href="#"
+                class="btn-danger"
+            >
+                Ya, Hapus
+            </a>
+
+            <button
+                type="button"
+                class="btn-secondary"
+                onclick="closeDeleteModal()"
+            >
+                Batal
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function openDeleteModal(id)
+{
+    document.getElementById("deleteModal").style.display = "flex";
+
+    document.getElementById("confirmDeleteBtn").href =
+        "/admin/layanan/hapus/" + id;
+}
+
+function closeDeleteModal()
+{
+    document.getElementById("deleteModal").style.display = "none";
+}
+</script>
 
 {% endblock %}

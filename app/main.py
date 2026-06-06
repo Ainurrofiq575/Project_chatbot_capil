@@ -1053,31 +1053,120 @@ async def tambah_layanan_process(request: Request):
 
 print("Database berhasil terhubung")
 
+def tampilkan_menu_utama():
+    return """
+Halo 👋
+Saya chatbot Disdukcapil Kota Tegal.
+
+Silakan pilih layanan berikut:
+
+1. KTP
+2. Kartu Keluarga
+3. KIA
+4. Akta Kelahiran
+5. Akta Kematian
+6. Pindah Datang
+7. Perkawinan / Perceraian
+8. Pengakuan / Pengesahan Anak
+9. Perubahan Nama
+10. Dokumen Hilang / Rusak
+
+Ketik angka menu, contoh: 2
+Atau ketik manual, contoh: syarat membuat KK baru
+
+Ketik "menu" untuk melihat daftar ini lagi.
+"""
+
+def tampilkan_submenu(message):
+
+    submenu = {
+        "1": """
+Menu KTP:
+
+1.1 Syarat membuat KTP baru
+1.2 Syarat cetak ulang KTP rusak
+1.3 Syarat cetak ulang KTP hilang
+1.4 Prosedur pembuatan KTP
+
+Ketik 0 untuk kembali ke menu utama.
+""",
+
+        "2": """
+Menu Kartu Keluarga:
+
+2.1 Syarat membuat KK baru
+2.2 Syarat perubahan KK
+2.3 Syarat cetak ulang KK hilang/rusak
+2.4 Prosedur pembuatan KK
+
+Ketik 0 untuk kembali ke menu utama.
+""",
+
+        "3": """
+Menu KIA:
+
+3.1 Syarat KIA usia 0-5 tahun
+3.2 Syarat KIA usia 5-17 tahun
+3.3 Prosedur pembuatan KIA
+
+Ketik 0 untuk kembali ke menu utama.
+"""
+    }
+
+    return submenu.get(message)
+
+def pertanyaan_dari_kode(message):
+
+    kode = {
+        "1.1": "Apa saja persyaratan membuat KTP baru?",
+        "1.2": "Apa saja persyaratan cetak ulang KTP karena rusak?",
+        "1.3": "Apa saja persyaratan cetak ulang KTP karena hilang?",
+        "1.4": "Bagaimana prosedur pembuatan KTP?",
+
+        "2.1": "Apa persyaratan membuat Kartu Keluarga baru?",
+        "2.2": "Apa persyaratan perubahan Kartu Keluarga?",
+        "2.3": "Apa persyaratan percetakan KK karena hilang atau rusak?",
+        "2.4": "Bagaimana prosedur pembuatan Kartu Keluarga?",
+
+        "3.1": "Apa persyaratan membuat KIA usia 0 sampai 5 tahun?",
+        "3.2": "Apa persyaratan membuat KIA usia 5 sampai 17 tahun?",
+        "3.3": "Bagaimana prosedur pembuatan KIA?"
+    }
+
+    return kode.get(message)
+
 # CHATBOT
 @app.post("/api/chatbot")
 async def api_chatbot(request: Request):
 
     body = await request.json()
-    message = body.get("message", "").strip()
+    message = body.get("message", "").strip().lower()
 
     if not message:
         return JSONResponse({
             "reply": "Silakan ketik pertanyaan terlebih dahulu."
         })
 
-    menu = {
-        "1": "Apa saja persyaratan membuat KTP baru?",
-        "2": "Apa saja persyaratan Kartu Keluarga?",
-        "3": "Apa saja persyaratan Akta Kelahiran?",
-        "4": "Apa saja persyaratan Akta Kematian?",
-        "5": "Apa saja persyaratan perubahan status pendidikan?",
-        "6": "Apa saja persyaratan pindah datang?",
-        "7": "Apa saja layanan Disdukcapil?"
-    }
+    if message == "menu" or message == "0":
+        return JSONResponse({
+            "reply": tampilkan_menu_utama()
+        })
 
+    submenu = tampilkan_submenu(message)
 
-    if message in menu:
-        message = menu[message]
+    if submenu:
+        return JSONResponse({
+            "reply": submenu
+        })
+
+    pertanyaan = pertanyaan_dari_kode(message)
+
+    if pertanyaan:
+        reply = chatbot_response(pertanyaan)
+
+        return JSONResponse({
+            "reply": reply
+        })
 
     reply = chatbot_response(message)
 

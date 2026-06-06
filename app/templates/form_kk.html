@@ -65,25 +65,34 @@
             placeholder="Tambahkan catatan jika perlu">
         </textarea>
 
-<label>Upload Dokumen</label>
+        <!-- F-1.06 DIGITAL GENERATOR -->
+        <button type="button" class="btn-digital-form" onclick="openF106Modal()">
+            ✍️ Isi Formulir F-1.06 Digital &amp; Tanda Tangan
+        </button>
 
-<div id="file-container">
+        <div id="pdf-status" class="pdf-status-badge">
+            <span id="pdf-status-text">✓ Berhasil melampirkan berkas F-1.06 Digital</span>
+        </div>
 
-    <input 
-        type="file"
-        name="file_upload"
-        accept=".jpg,.jpeg,.png,.pdf"
-    >
+        <input type="file" id="f106-file-input" name="file_upload" style="display: none;">
 
-</div>
+        <label>Upload Dokumen Pendukung Lainnya (Opsional)</label>
 
-<button 
-    type="button" 
-    class="btn-tambah-file"
-    onclick="tambahFile()"
->
-    + Tambah Gambar
-</button>
+        <div id="file-container">
+            <input 
+                type="file"
+                name="file_upload"
+                accept=".jpg,.jpeg,.png,.pdf"
+            >
+        </div>
+
+        <button 
+            type="button" 
+            class="btn-tambah-file"
+            onclick="tambahFile()"
+        >
+            + Tambah Gambar/Dokumen
+        </button>
 
         <button type="submit" class="btn-submit">Kirim Pengajuan</button>
 
@@ -91,25 +100,330 @@
 
 </div>
 
+<!-- MODAL FORM F-1.06 -->
+<div id="f106Modal" class="f106-modal">
+    <div class="f106-modal-content">
+        <button type="button" class="f106-modal-close" onclick="closeF106Modal()">&times;</button>
+        <h3 class="f106-modal-title">FORMULIR F-1.06 DIGITAL<br><span style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Surat Pernyataan Perubahan Elemen Data Kependudukan</span></h3>
+        
+        <!-- BAGIAN 1: DATA PEMOHON -->
+        <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px;">I. DATA PEMOHON</h4>
+        <div class="f106-form-grid">
+            <div>
+                <label>Nama Lengkap</label>
+                <input type="text" id="f106_nama" value="{{ user.nama }}" placeholder="Nama Lengkap" required>
+            </div>
+            <div>
+                <label>NIK</label>
+                <input type="text" id="f106_nik" value="{{ user.nik }}" placeholder="NIK" required>
+            </div>
+            <div>
+                <label>Nomor KK</label>
+                <input type="text" id="f106_nokk" placeholder="Nomor KK (16 digit)" required>
+            </div>
+            <div>
+                <label>Alamat Rumah</label>
+                <input type="text" id="f106_alamat" placeholder="Alamat Rumah Lengkap" required>
+            </div>
+        </div>
+
+        <!-- BAGIAN 2: RINCIAN KK -->
+        <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 24px;">II. ANGGOTA KELUARGA YANG MENGALAMI PERUBAHAN DATA</h4>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Masukkan daftar anggota keluarga beserta rincian data yang diubah.</p>
+        
+        <div class="f106-table-container">
+            <table class="f106-table" id="table-rincian">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 25%">Nama Lengkap</th>
+                        <th style="width: 20%">NIK</th>
+                        <th style="width: 25%">Elemen Data Yang Diubah</th>
+                        <th style="width: 25%">Keterangan (Semula &rarr; Menjadi)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" class="row-nama" placeholder="Contoh: Budi"></td>
+                        <td><input type="text" class="row-nik" placeholder="NIK 16 digit"></td>
+                        <td>
+                            <select class="row-elemen">
+                                <option value="Pendidikan Akhir">Pendidikan Akhir</option>
+                                <option value="Pekerjaan">Pekerjaan</option>
+                                <option value="Agama">Agama</option>
+                                <option value="Nama Lengkap">Nama Lengkap</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="row-ket" placeholder="SMA -> S1"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn-add-row" onclick="addRowRincian()">+ Tambah Anggota</button>
+        </div>
+
+        <!-- BAGIAN 3: TANDA TANGAN -->
+        <h4 style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 24px;">III. TANDA TANGAN DIGITAL</h4>
+        <div class="signature-wrapper">
+            <span class="signature-pad-label">Bubuhkan tanda tangan Anda di canvas bawah ini:</span>
+            <canvas class="signature-pad-canvas" id="signature-canvas"></canvas>
+            <div class="signature-pad-actions">
+                <button type="button" class="btn-clear-sig" onclick="clearSignature()">Hapus Coretan</button>
+            </div>
+        </div>
+
+        <button type="button" class="btn-submit-modal" onclick="generateF106PDF()">Simpan &amp; Hubungkan Berkas F-1.06</button>
+    </div>
+</div>
+
 <!-- js -->
- <script>
-
+<script>
 function tambahFile() {
-
     const container = document.getElementById("file-container");
-
     const input = document.createElement("input");
-
     input.type = "file";
-
     input.name = "file_upload";
-
     input.accept = ".jpg,.jpeg,.png,.pdf";
-
     input.style.marginTop = "10px";
-
     container.appendChild(input);
 }
 
+// Logika Digital Form F-1.06
+let signaturePad;
+
+function openF106Modal() {
+    document.getElementById("f106Modal").classList.add("active");
+    
+    const canvas = document.getElementById("signature-canvas");
+    if (!signaturePad) {
+        signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            penColor: 'rgb(0, 0, 0)'
+        });
+    }
+    
+    // Sesuaikan resolusi canvas dengan high-DPI screens
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+    signaturePad.clear();
+}
+
+function closeF106Modal() {
+    document.getElementById("f106Modal").classList.remove("active");
+}
+
+function clearSignature() {
+    if (signaturePad) {
+        signaturePad.clear();
+    }
+}
+
+let rowCount = 1;
+function addRowRincian() {
+    rowCount++;
+    const tableBody = document.querySelector("#table-rincian tbody");
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+        <td>${rowCount}</td>
+        <td><input type="text" class="row-nama" placeholder="Nama Lengkap"></td>
+        <td><input type="text" class="row-nik" placeholder="NIK 16 digit"></td>
+        <td>
+            <select class="row-elemen">
+                <option value="Pendidikan Akhir">Pendidikan Akhir</option>
+                <option value="Pekerjaan">Pekerjaan</option>
+                <option value="Agama">Agama</option>
+                <option value="Nama Lengkap">Nama Lengkap</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
+        </td>
+        <td><input type="text" class="row-ket" placeholder="SMA -> S1"></td>
+    `;
+    tableBody.appendChild(newRow);
+}
+
+function generateF106PDF() {
+    const namaVal = document.getElementById("f106_nama").value.trim();
+    const nikVal = document.getElementById("f106_nik").value.trim();
+    const nokkVal = document.getElementById("f106_nokk").value.trim();
+    const alamatVal = document.getElementById("f106_alamat").value.trim();
+
+    if (!namaVal || !nikVal || !nokkVal || !alamatVal) {
+        alert("Mohon lengkapi bagian I. DATA PEMOHON!");
+        return;
+    }
+
+    if (signaturePad.isEmpty()) {
+        alert("Mohon bubuhkan tanda tangan Anda terlebih dahulu!");
+        return;
+    }
+
+    // Ambil data tabel rincian
+    const tableRows = [];
+    const nameInputs = document.querySelectorAll(".row-nama");
+    const nikInputs = document.querySelectorAll(".row-nik");
+    const elemenSelects = document.querySelectorAll(".row-elemen");
+    const ketInputs = document.querySelectorAll(".row-ket");
+
+    let validRows = 0;
+    for (let i = 0; i < nameInputs.length; i++) {
+        const rowNama = nameInputs[i].value.trim();
+        const rowNik = nikInputs[i].value.trim();
+        const rowElemen = elemenSelects[i].value;
+        const rowKet = ketInputs[i].value.trim();
+
+        if (rowNama || rowNik || rowKet) {
+            if (!rowNama || !rowNik || !rowKet) {
+                alert(`Mohon lengkapi seluruh kolom rincian di baris ke-${i+1}!`);
+                return;
+            }
+            validRows++;
+            tableRows.push([
+                validRows.toString(),
+                rowNama,
+                rowNik,
+                rowElemen,
+                rowKet
+            ]);
+        }
+    }
+
+    if (validRows === 0) {
+        alert("Mohon isi minimal satu baris anggota keluarga yang mengalami perubahan!");
+        return;
+    }
+
+    // Pembuatan PDF (A4)
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
+    });
+
+    // 1. Label F-1.06 Kanan Atas
+    doc.rect(170, 10, 26, 8);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("F-1.06", 183, 15.5, { align: "center" });
+
+    // 2. Judul Dokumen
+    doc.setFontSize(13);
+    doc.text("SURAT PERNYATAAN PERUBAHAN ELEMEN DATA KEPENDUDUKAN", 105, 26, { align: "center" });
+    doc.setLineWidth(0.4);
+    doc.line(14, 29, 196, 29);
+
+    // 3. Biodata Pemohon
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("Yang bertandatangan dibawah ini :", 14, 36);
+
+    doc.text("Nama Lengkap", 20, 43);
+    doc.text(":", 60, 43);
+    doc.setFont("helvetica", "bold");
+    doc.text(namaVal, 64, 43);
+
+    doc.setFont("helvetica", "normal");
+    doc.text("N I K", 20, 49);
+    doc.text(":", 60, 49);
+    doc.text(nikVal, 64, 49);
+
+    doc.text("Nomor KK", 20, 55);
+    doc.text(":", 60, 55);
+    doc.text(nokkVal, 64, 55);
+
+    doc.text("Alamat Rumah", 20, 61);
+    doc.text(":", 60, 61);
+    
+    const splitAlamat = doc.splitTextToSize(alamatVal, 130);
+    doc.text(splitAlamat, 64, 61);
+
+    const alamatLines = splitAlamat.length;
+    const nextY = 61 + (alamatLines * 5);
+
+    doc.text("Menyatakan bahwa data elemen data kependudukan saya dan anggota keluarga saya telah berubah, dengan rincian :", 14, nextY + 4);
+
+    // 4. Tabel jsPDF-AutoTable
+    const headers = [["No", "Nama Anggota Keluarga", "N I K", "Elemen Data", "Keterangan (Semula -> Menjadi)"]];
+    
+    doc.autoTable({
+        startY: nextY + 7,
+        head: headers,
+        body: tableRows,
+        theme: 'grid',
+        headStyles: { 
+            fillColor: [37, 99, 235], // royal blue
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            halign: 'center'
+        },
+        styles: { 
+            fontSize: 9,
+            cellPadding: 3,
+            valign: 'middle'
+        },
+        columnStyles: {
+            0: { cellWidth: 10, halign: 'center' },
+            1: { cellWidth: 45 },
+            2: { cellWidth: 35 },
+            3: { cellWidth: 40 },
+            4: { cellWidth: 52 }
+        }
+    });
+
+    const finalY = doc.lastAutoTable.finalY || (nextY + 30);
+
+    // 5. Pernyataan Penutup
+    doc.setFontSize(9.5);
+    doc.text("Demikian Surat Pernyataan ini saya buat dengan sebenarnya, apabila dalam keterangan yang saya berikan", 14, finalY + 10);
+    doc.text("terdapat hal-hal yang tidak berdasarkan keadaan yang sebenarnya, saya bersedia dikenakan sanksi sesuai", 14, finalY + 15);
+    doc.text("ketentuan peraturan perundang-undangan yang berlaku.", 14, finalY + 20);
+
+    // 6. Tempat & Tanda Tangan
+    const today = new Date();
+    const dateStr = today.getDate() + " " + ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"][today.getMonth()] + " " + today.getFullYear();
+
+    doc.text("Kota Tegal, " + dateStr, 140, finalY + 32);
+    doc.text("Yang membuat pernyataan,", 140, finalY + 37);
+
+    // Box Materai
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.rect(138, finalY + 43, 16, 9);
+    doc.text("Materai", 146, finalY + 48.5, { align: "center" });
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+
+    // Add Signature Image from signature pad
+    const sigData = signaturePad.toDataURL("image/png");
+    doc.addImage(sigData, 'PNG', 140, finalY + 41, 45, 16);
+
+    doc.setFont("helvetica", "bold");
+    doc.text(namaVal, 140, finalY + 63);
+    
+    const nameWidth = doc.getTextWidth(namaVal);
+    doc.setLineWidth(0.3);
+    doc.line(140, finalY + 64, 140 + nameWidth, finalY + 64);
+
+    // Konversi PDF ke Blob & File Object
+    const pdfBlob = doc.output('blob');
+    const myFile = new File([pdfBlob], 'F-1.06_Digital.pdf', { type: 'application/pdf' });
+    
+    // Inject File ke Input
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(myFile);
+    document.getElementById('f106-file-input').files = dataTransfer.files;
+
+    // Tampilkan visual status sukses
+    const badge = document.getElementById("pdf-status");
+    const badgeText = document.getElementById("pdf-status-text");
+    badgeText.innerHTML = `✓ Berhasil melampirkan berkas <strong>F-1.06_Digital.pdf</strong> (${(pdfBlob.size / 1024).toFixed(1)} KB)`;
+    badge.style.display = "flex";
+
+    closeF106Modal();
+    alert("Surat Pernyataan F-1.06 berhasil digenerate dan dilampirkan otomatis!");
+}
 </script>
 {% endblock %}

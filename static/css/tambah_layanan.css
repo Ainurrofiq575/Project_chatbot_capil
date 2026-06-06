@@ -5,21 +5,24 @@
 }
 
 .tambah-card{
-    width: 900px;
+    width: 100%;
+    max-width: 900px;
 
-    background: white;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
 
     padding: 40px;
 
     border-radius: 20px;
 
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    box-sizing: border-box;
 }
 
 .tambah-card h1{
     margin-bottom: 35px;
 
-    color: #1e293b;
+    color: var(--text-main);
 
     font-size: 36px;
 }
@@ -35,7 +38,7 @@
 
     font-weight: 600;
 
-    color: #334155;
+    color: var(--text-main);
 }
 
 .form-group input,
@@ -44,7 +47,7 @@
     box-sizing: border-box;
     padding: 14px 16px;
 
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border);
 
     border-radius: 12px;
 
@@ -53,13 +56,15 @@
     outline: none;
 
     transition: 0.3s;
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
 .form-group input:focus,
 .form-group textarea:focus{
     border-color: #2563eb;
-
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-glow);
 }
 
 .button-group{
@@ -112,4 +117,28 @@
 
 .btn-batal:hover{
     background: #dc2626;
+}
+
+@media (max-width: 768px) {
+    .tambah-container {
+        padding: 20px 12px;
+    }
+    .tambah-card {
+        padding: 24px 16px;
+        border-radius: 12px;
+    }
+    .tambah-card h1 {
+        font-size: 26px;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+    .button-group {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .btn-simpan, .btn-batal {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
 }

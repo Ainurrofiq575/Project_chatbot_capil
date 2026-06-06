@@ -4,12 +4,27 @@ function sendMessage() {
     const chatBody = document.getElementById("chatBody");
 
     const message = input.value.trim();
+    const menuText = {
+    "1": "1 - KTP",
+    "2": "2 - Kartu Keluarga",
+    "3": "3 - KIA",
+    "4": "4 - Akta Kelahiran",
+    "5": "5 - Akta Kematian",
+    "6": "6 - Pindah Datang",
+    "7": "7 - Perkawinan / Perceraian",
+    "8": "8 - Pengakuan / Pengesahan Anak",
+    "9": "9 - Perubahan Nama",
+    "10": "10 - Dokumen Hilang / Rusak"
+};
+
+const tampilPesan =
+    menuText[message] || message;
     if (message === "") return;
 
     // User message
     const userDiv = document.createElement("div");
     userDiv.classList.add("user-message");
-    userDiv.textContent = message;
+    userDiv.textContent = tampilPesan;
     chatBody.appendChild(userDiv);
 
     // Bot reply
@@ -60,16 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Popular suggestions interaction
-    const suggestions = document.querySelectorAll(".chat-suggestions span");
-    suggestions.forEach(span => {
-        span.addEventListener("click", function () {
-            if (input) {
-                input.value = this.innerText;
-                sendMessage();
-            }
-        });
-    });
 });
 
 // ==========================
@@ -440,4 +445,4 @@ document.addEventListener("DOMContentLoaded", function () {
     if (themeToggleMobileBtn) {
         themeToggleMobileBtn.addEventListener("click", toggleTheme);
     }
-});
+});
